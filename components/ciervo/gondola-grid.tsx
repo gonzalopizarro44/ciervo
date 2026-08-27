@@ -110,7 +110,7 @@ export function GondolaGrid({ gondola, onBack }: GondolaGridProps) {
                     return (
                       <div
                         key={`${x}-${y}`}
-                        className="flex h-14 w-14 items-center justify-center rounded-lg border border-dashed border-border/40 text-[10px] text-muted-foreground/30"
+                        className="flex h-24 w-14 shrink-0 items-center justify-center rounded-lg border border-dashed border-border/40 text-[10px] text-muted-foreground/30"
                       >
                         —
                       </div>
@@ -123,8 +123,8 @@ export function GondolaGrid({ gondola, onBack }: GondolaGridProps) {
                       key={cell.id}
                       onClick={() => setEditingCell(cell)}
                       className={cn(
-                        'flex h-14 w-14 flex-col items-center justify-center rounded-lg border p-1 text-center transition-all active:scale-95',
-                        meta.bg,
+                        'flex h-24 w-14 shrink-0 flex-col items-center justify-center rounded-lg border p-1 text-center transition-all active:scale-95',
+                        meta.bgSolid,
                         meta.border,
                         'hover:brightness-110'
                       )}
