@@ -125,14 +125,14 @@ export function GondolaGrid({ gondola, onBack }: GondolaGridProps) {
                       className={cn(
                         'flex h-24 w-14 shrink-0 flex-col items-center justify-center rounded-lg border p-1 text-center transition-all active:scale-95',
                         meta.bgSolid,
-                        meta.border,
+                        'border-white',
                         'hover:brightness-110'
                       )}
                     >
-                      <span className={cn('w-full truncate text-[9px] font-medium leading-tight', meta.text)}>
+                      <span className="w-full truncate text-[9px] font-medium leading-tight text-white">
                         {cell.wine_name || '—'}
                       </span>
-                      <span className={cn('mt-0.5 text-sm font-bold', meta.text)}>
+                      <span className="mt-0.5 text-sm font-bold text-white">
                         {cell.bottle_count}
                       </span>
                     </button>
