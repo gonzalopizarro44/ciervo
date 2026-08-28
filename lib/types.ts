@@ -24,13 +24,13 @@ export type StockLevel = 'green' | 'yellow' | 'red';
 export interface CategoryMeta {
   id: CategoryId;
   label: string;
-  icon: 'Wine' | 'FlaskConical' | 'Refrigerator';
+  icon: 'Wine' | 'Milk' | 'Refrigerator';
   accent: string;
 }
 
 export const CATEGORIES: CategoryMeta[] = [
   { id: 'vinos', label: 'Vinos y espumantes', icon: 'Wine', accent: 'from-rose-500/20 to-rose-600/10' },
-  { id: 'destilados', label: 'Destilados', icon: 'FlaskConical', accent: 'from-amber-500/20 to-amber-600/10' },
+  { id: 'destilados', label: 'Destilados', icon: 'Milk', accent: 'from-amber-500/20 to-amber-600/10' },
   { id: 'heladeras', label: 'Heladeras', icon: 'Refrigerator', accent: 'from-sky-500/20 to-sky-600/10' },
 ];
 

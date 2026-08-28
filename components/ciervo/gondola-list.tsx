@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowLeft, Plus, Grid3x3, Trash2, Loader2, FlaskConical, Refrigerator, Wine } from 'lucide-react';
+import { ArrowLeft, Plus, Grid3x3, Trash2, Loader2, Milk, Refrigerator, Wine } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,6 +15,9 @@ import {
 } from '@/components/ui/dialog';
 import { CATEGORIES, type CategoryId, type Gondola } from '@/lib/types';
 import { useGondolas } from '@/hooks/use-gondolas';
+import { StockLights } from '@/components/ciervo/stock-lights';
+import { useStockStats } from '@/hooks/use-stock-stats';
+import { StockSearch } from '@/components/ciervo/stock-search';
 import { toast } from 'sonner';
 
 interface GondolaListProps {
@@ -23,10 +26,11 @@ interface GondolaListProps {
   onOpenGondola: (g: Gondola) => void;
 }
 
-const ICONS = { Wine, FlaskConical, Refrigerator };
+const ICONS = { Wine, Milk, Refrigerator };
 
 export function GondolaList({ category, onBack, onOpenGondola }: GondolaListProps) {
   const { gondolas, loading, createGondola, deleteGondola } = useGondolas(category);
+  const { byGondola } = useStockStats(category);
   const [createOpen, setCreateOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<Gondola | null>(null);
 
@@ -53,6 +57,10 @@ export function GondolaList({ category, onBack, onOpenGondola }: GondolaListProp
           </div>
         </div>
       </header>
+
+      <div className="mb-5">
+        <StockSearch category={category} />
+      </div>
 
       <Button
         onClick={() => setCreateOpen(true)}
@@ -97,6 +105,7 @@ export function GondolaList({ category, onBack, onOpenGondola }: GondolaListProp
                   </p>
                 </div>
               </button>
+              <StockLights counts={byGondola[g.id] ?? { red: 0, yellow: 0, green: 0 }} />
               <button
                 onClick={() => setConfirmDelete(g)}
                 className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-red-500/10 hover:text-red-400 transition-colors"

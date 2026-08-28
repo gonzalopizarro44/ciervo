@@ -1,17 +1,22 @@
 'use client';
 
-import { Wine, FlaskConical, Refrigerator, ChevronRight, LogOut } from 'lucide-react';
+import { Wine, Milk, Refrigerator, ChevronRight, LogOut } from 'lucide-react';
 import { CATEGORIES, type CategoryId } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { StockLights } from '@/components/ciervo/stock-lights';
+import { useStockStats } from '@/hooks/use-stock-stats';
+import { StockSearch } from '@/components/ciervo/stock-search';
 
 interface CategoryMenuProps {
   onSelect: (id: CategoryId) => void;
   onLogout: () => void;
 }
 
-const ICONS = { Wine, FlaskConical, Refrigerator };
+const ICONS = { Wine, Milk, Refrigerator };
 
 export function CategoryMenu({ onSelect, onLogout }: CategoryMenuProps) {
+  const { byCategory } = useStockStats();
+
   return (
     <div className="flex min-h-[100dvh] flex-col px-5 py-8">
       <header className="mb-8 flex items-center justify-between">
@@ -27,6 +32,8 @@ export function CategoryMenu({ onSelect, onLogout }: CategoryMenuProps) {
           <LogOut className="h-5 w-5" />
         </button>
       </header>
+
+      <StockSearch />
 
       <div className="flex flex-1 flex-col justify-center gap-4 pb-8">
         {CATEGORIES.map((cat) => {
@@ -47,6 +54,7 @@ export function CategoryMenu({ onSelect, onLogout }: CategoryMenuProps) {
                 <h2 className="text-lg font-semibold leading-tight">{cat.label}</h2>
                 <p className="mt-0.5 text-sm text-muted-foreground">Ver góndolas</p>
               </div>
+              <StockLights counts={byCategory[cat.id]} />
               <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1" />
             </button>
           );
