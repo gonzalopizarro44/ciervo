@@ -10,13 +10,6 @@ export const metadata: Metadata = {
   description: 'Sistema de semáforos para monitorear la reposición de góndolas de bebidas.',
 };
 
-export const viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-  themeColor: '#0a0a0a',
-};
-
 export default function RootLayout({
   children,
 }: {

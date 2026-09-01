@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, Loader2, Minus, Plus, X, MapPin } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, Minus, Plus, X, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,18 +16,50 @@ import {
 import type { Gondola, Cell, StockLevel } from '@/lib/types';
 import { getStockLevel, STOCK_META } from '@/lib/types';
 import { useCells } from '@/hooks/use-cells';
+import { useGondolas } from '@/hooks/use-gondolas';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
 interface GondolaGridProps {
   gondola: Gondola;
   onBack: () => void;
+  onNavigate: (gondola: Gondola) => void;
 }
 
-export function GondolaGrid({ gondola, onBack }: GondolaGridProps) {
+export function GondolaGrid({ gondola, onBack, onNavigate }: GondolaGridProps) {
   const { cells, loading, updateCell } = useCells(gondola.id);
+  const { gondolas } = useGondolas(gondola.category);
   const [editingCell, setEditingCell] = useState<Cell | null>(null);
   const [filterLevel, setFilterLevel] = useState<StockLevel | null>(null);
+
+  const currentIndex = gondolas.findIndex((item) => item.id === gondola.id);
+  const previousGondola = currentIndex > 0 ? gondolas[currentIndex - 1] : null;
+  const nextGondola = currentIndex >= 0 && currentIndex < gondolas.length - 1 ? gondolas[currentIndex + 1] : null;
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT')
+      ) {
+        return;
+      }
+
+      if (event.key === 'ArrowLeft' && previousGondola) {
+        event.preventDefault();
+        onNavigate(previousGondola);
+      }
+
+      if (event.key === 'ArrowRight' && nextGondola) {
+        event.preventDefault();
+        onNavigate(nextGondola);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [nextGondola, onNavigate, previousGondola]);
 
   // Build a 2D grid: grid[y][x] = Cell | null
   const grid = useMemo(() => {
@@ -59,36 +91,35 @@ export function GondolaGrid({ gondola, onBack }: GondolaGridProps) {
   return (
     <div className="flex h-[100dvh] flex-col overflow-hidden">
       {/* Header */}
-      <header className="shrink-0 border-b border-border bg-background/90 px-4 py-3 backdrop-blur-md">
-        <div className="flex items-center gap-3">
+      <header className="shrink-0 border-b border-border bg-background/90 px-3 py-3 backdrop-blur-md">
+        <div className="grid grid-cols-[auto_auto_1fr_auto] items-center gap-2">
           <button
             onClick={onBack}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             aria-label="Volver"
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
-          <div className="flex-1">
-            <h1 className="text-base font-bold leading-tight">{gondola.name}</h1>
-            <p className="text-[11px] text-muted-foreground">
-              {gondola.size_x} × {gondola.size_y} · Tocá una celda para editar
-            </p>
-          </div>
-          {/* Compact stats */}
-          <div className="flex items-center gap-2.5 text-[11px]">
-            <span className="flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" />
-              <span className="text-muted-foreground">{stats.green}</span>
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full bg-amber-400" />
-              <span className="text-muted-foreground">{stats.yellow}</span>
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full bg-red-400" />
-              <span className="text-muted-foreground">{stats.red}</span>
-            </span>
-          </div>
+
+          <button
+            onClick={() => previousGondola && onNavigate(previousGondola)}
+            disabled={!previousGondola}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-muted-foreground shadow-sm transition-all hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+            aria-label="Góndola anterior"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+
+          <h1 className="truncate text-center text-lg font-black tracking-tight text-foreground">{gondola.name}</h1>
+
+          <button
+            onClick={() => nextGondola && onNavigate(nextGondola)}
+            disabled={!nextGondola}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-muted-foreground shadow-sm transition-all hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+            aria-label="Góndola siguiente"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
         </div>
       </header>
 

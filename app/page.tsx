@@ -63,6 +63,7 @@ export default function Home() {
     <GondolaGrid
       gondola={view.gondola}
       onBack={() => setView({ name: 'list', category: view.gondola.category })}
+      onNavigate={(g) => setView({ name: 'grid', gondola: g })}
     />
   );
 }
