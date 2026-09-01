@@ -213,7 +213,7 @@ export function GondolaGrid({ gondola, onBack, onNavigate }: GondolaGridProps) {
           level={filterLevel}
           cells={cells
             .filter((c) => getStockLevel(c.bottle_count) === filterLevel)
-            .sort((a, b) => a.bottle_count - b.bottle_count)}
+            .sort(sortCellsForReposition)}
           onClose={() => setFilterLevel(null)}
           onCellClick={(cell) => {
             setFilterLevel(null);
@@ -238,6 +238,28 @@ export function GondolaGrid({ gondola, onBack, onNavigate }: GondolaGridProps) {
       />
     </div>
   );
+}
+
+function sortCellsForReposition(a: Cell, b: Cell) {
+  const aHasWineName = Boolean(a.wine_name?.trim());
+  const bHasWineName = Boolean(b.wine_name?.trim());
+
+  if (aHasWineName !== bHasWineName) {
+    return aHasWineName ? -1 : 1;
+  }
+
+  if (a.bottle_count !== b.bottle_count) {
+    return a.bottle_count - b.bottle_count;
+  }
+
+  const aName = (a.wine_name || '').trim().toLocaleLowerCase();
+  const bName = (b.wine_name || '').trim().toLocaleLowerCase();
+
+  if (aName !== bName) {
+    return aName.localeCompare(bName);
+  }
+
+  return (a.pos_y * 100 + a.pos_x) - (b.pos_y * 100 + b.pos_x);
 }
 
 function FilteredListPanel({
