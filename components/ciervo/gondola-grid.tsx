@@ -124,24 +124,25 @@ export function GondolaGrid({ gondola, onBack, onNavigate }: GondolaGridProps) {
       </header>
 
       {/* Gondola grid — fixed-size cells, scrollable if needed */}
-      <div className="flex-1 overflow-auto px-3 py-3">
+      <div className="flex-1 overflow-auto px-3 py-3 md:overflow-x-hidden">
         {loading ? (
           <div className="flex h-full items-center justify-center">
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
         ) : (
-          <div className="flex flex-col gap-2">
+          <div className="mx-auto flex w-max max-w-none flex-col gap-2 md:w-full md:max-w-[980px]">
             {grid.map((row, y) => (
               <div
                 key={y}
-                className="flex gap-1.5"
+                className="flex gap-1.5 md:grid md:gap-1.5"
+                style={{ gridTemplateColumns: `repeat(${gondola.size_x}, minmax(0, 1fr))` }}
               >
                 {row.map((cell, x) => {
                   if (!cell) {
                     return (
                       <div
                         key={`${x}-${y}`}
-                        className="flex h-24 w-14 shrink-0 items-center justify-center rounded-lg border border-dashed border-border/40 text-[10px] text-muted-foreground/30"
+                        className="flex h-24 w-14 shrink-0 items-center justify-center rounded-lg border border-dashed border-border/40 text-[10px] text-muted-foreground/30 md:w-auto"
                       >
                         —
                       </div>
@@ -154,7 +155,7 @@ export function GondolaGrid({ gondola, onBack, onNavigate }: GondolaGridProps) {
                       key={cell.id}
                       onClick={() => setEditingCell(cell)}
                       className={cn(
-                        'flex h-24 w-14 shrink-0 flex-col items-center justify-center rounded-lg border p-1 text-center transition-all active:scale-95',
+                        'flex h-24 w-14 shrink-0 flex-col items-center justify-center rounded-lg border p-1 text-center transition-all active:scale-95 md:w-auto',
                         meta.bgSolid,
                         'border-white',
                         'hover:brightness-110'
