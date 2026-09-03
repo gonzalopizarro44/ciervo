@@ -5,12 +5,13 @@ import { AuthScreen } from '@/components/ciervo/auth-screen';
 import { CategoryMenu } from '@/components/ciervo/category-menu';
 import { GondolaList } from '@/components/ciervo/gondola-list';
 import { GondolaGrid } from '@/components/ciervo/gondola-grid';
-import type { CategoryId, Gondola } from '@/lib/types';
+import type { CategoryId, Cell, Gondola } from '@/lib/types';
+import type { StockSearchResult } from '@/hooks/use-stock-search';
 
 type View =
   | { name: 'menu' }
   | { name: 'list'; category: CategoryId }
-  | { name: 'grid'; gondola: Gondola };
+  | { name: 'grid'; gondola: Gondola; cell?: Cell };
 
 const AUTH_KEY = 'ciervo-auth';
 
@@ -36,6 +37,10 @@ export default function Home() {
     setView({ name: 'menu' });
   };
 
+  const handleSelectCell = ({ cell, gondola }: StockSearchResult) => {
+    setView({ name: 'grid', gondola, cell });
+  };
+
   if (!authed) {
     return <AuthScreen onSuccess={handleAuth} />;
   }
@@ -45,6 +50,7 @@ export default function Home() {
       <CategoryMenu
         onSelect={(cat) => setView({ name: 'list', category: cat })}
         onLogout={handleLogout}
+        onSelectCell={handleSelectCell}
       />
     );
   }
@@ -55,6 +61,7 @@ export default function Home() {
         category={view.category}
         onBack={() => setView({ name: 'menu' })}
         onOpenGondola={(g) => setView({ name: 'grid', gondola: g })}
+        onSelectCell={handleSelectCell}
       />
     );
   }
@@ -62,6 +69,7 @@ export default function Home() {
   return (
     <GondolaGrid
       gondola={view.gondola}
+      initialCell={view.cell}
       onBack={() => setView({ name: 'list', category: view.gondola.category })}
       onNavigate={(g) => setView({ name: 'grid', gondola: g })}
     />

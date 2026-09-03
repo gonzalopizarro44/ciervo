@@ -4,9 +4,15 @@ import { Search, Loader2, MapPin } from 'lucide-react';
 import { useState } from 'react';
 import { CATEGORIES, type CategoryId } from '@/lib/types';
 import { useStockSearch } from '@/hooks/use-stock-search';
+import type { StockSearchResult } from '@/hooks/use-stock-search';
 import { cn } from '@/lib/utils';
 
-export function StockSearch({ category }: { category?: CategoryId }) {
+interface StockSearchProps {
+  category?: CategoryId;
+  onSelect: (result: StockSearchResult) => void;
+}
+
+export function StockSearch({ category, onSelect }: StockSearchProps) {
   const [value, setValue] = useState('');
   const { results, loading, searched, search } = useStockSearch(category ?? null);
 
@@ -37,7 +43,11 @@ export function StockSearch({ category }: { category?: CategoryId }) {
           ) : (
             <div className="max-h-64 overflow-y-auto">
               {results.map(({ cell, gondola }) => (
-                <div key={cell.id} className="flex items-center gap-3 border-b border-border/60 px-4 py-3 last:border-0">
+                <button
+                  key={cell.id}
+                  onClick={() => onSelect({ cell, gondola })}
+                  className="flex w-full items-center gap-3 border-b border-border/60 px-4 py-3 text-left transition-colors hover:bg-accent/50 last:border-0"
+                >
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium text-foreground">
                       {cell.wine_name || 'Sin etiqueta'}
@@ -55,7 +65,7 @@ export function StockSearch({ category }: { category?: CategoryId }) {
                   )}>
                     {cell.bottle_count} {cell.bottle_count === 1 ? 'botella' : 'botellas'}
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           )}

@@ -22,15 +22,22 @@ import { toast } from 'sonner';
 
 interface GondolaGridProps {
   gondola: Gondola;
+  initialCell?: Cell;
   onBack: () => void;
   onNavigate: (gondola: Gondola) => void;
 }
 
-export function GondolaGrid({ gondola, onBack, onNavigate }: GondolaGridProps) {
+export function GondolaGrid({ gondola, initialCell, onBack, onNavigate }: GondolaGridProps) {
   const { cells, loading, updateCell } = useCells(gondola.id);
   const { gondolas } = useGondolas(gondola.category);
   const [editingCell, setEditingCell] = useState<Cell | null>(null);
   const [filterLevel, setFilterLevel] = useState<StockLevel | null>(null);
+
+  useEffect(() => {
+    if (initialCell?.gondola_id === gondola.id) {
+      setEditingCell(initialCell);
+    }
+  }, [gondola.id, initialCell]);
 
   const currentIndex = gondolas.findIndex((item) => item.id === gondola.id);
   const previousGondola = currentIndex > 0 ? gondolas[currentIndex - 1] : null;

@@ -13,8 +13,9 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { CATEGORIES, type CategoryId, type Gondola } from '@/lib/types';
+import { CATEGORIES, type CategoryId, type Cell, type Gondola } from '@/lib/types';
 import { useGondolas } from '@/hooks/use-gondolas';
+import type { StockSearchResult } from '@/hooks/use-stock-search';
 import { StockLights } from '@/components/ciervo/stock-lights';
 import { useStockStats } from '@/hooks/use-stock-stats';
 import { StockSearch } from '@/components/ciervo/stock-search';
@@ -24,11 +25,12 @@ interface GondolaListProps {
   category: CategoryId;
   onBack: () => void;
   onOpenGondola: (g: Gondola) => void;
+  onSelectCell: (result: StockSearchResult) => void;
 }
 
 const ICONS = { Wine, Milk, Refrigerator };
 
-export function GondolaList({ category, onBack, onOpenGondola }: GondolaListProps) {
+export function GondolaList({ category, onBack, onOpenGondola, onSelectCell }: GondolaListProps) {
   const { gondolas, loading, createGondola, deleteGondola } = useGondolas(category);
   const { byGondola } = useStockStats(category);
   const [createOpen, setCreateOpen] = useState(false);
@@ -59,7 +61,7 @@ export function GondolaList({ category, onBack, onOpenGondola }: GondolaListProp
       </header>
 
       <div className="mb-5">
-        <StockSearch category={category} />
+        <StockSearch category={category} onSelect={onSelectCell} />
       </div>
 
       <Button

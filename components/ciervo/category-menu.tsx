@@ -2,6 +2,7 @@
 
 import { Wine, Milk, Refrigerator, ChevronRight, LogOut } from 'lucide-react';
 import { CATEGORIES, type CategoryId } from '@/lib/types';
+import type { StockSearchResult } from '@/hooks/use-stock-search';
 import { cn } from '@/lib/utils';
 import { StockLights } from '@/components/ciervo/stock-lights';
 import { useStockStats } from '@/hooks/use-stock-stats';
@@ -10,11 +11,12 @@ import { StockSearch } from '@/components/ciervo/stock-search';
 interface CategoryMenuProps {
   onSelect: (id: CategoryId) => void;
   onLogout: () => void;
+  onSelectCell: (result: StockSearchResult) => void;
 }
 
 const ICONS = { Wine, Milk, Refrigerator };
 
-export function CategoryMenu({ onSelect, onLogout }: CategoryMenuProps) {
+export function CategoryMenu({ onSelect, onLogout, onSelectCell }: CategoryMenuProps) {
   const { byCategory } = useStockStats();
 
   return (
@@ -33,7 +35,7 @@ export function CategoryMenu({ onSelect, onLogout }: CategoryMenuProps) {
         </button>
       </header>
 
-      <StockSearch />
+      <StockSearch onSelect={onSelectCell} />
 
       <div className="flex flex-1 flex-col justify-center gap-4 pb-8">
         {CATEGORIES.map((cat) => {
