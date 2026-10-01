@@ -130,55 +130,55 @@ export function GondolaGrid({ gondola, initialCell, onBack, onNavigate }: Gondol
         </div>
       </header>
 
-      {/* Gondola grid — fixed-size cells, scrollable if needed */}
-      <div className="flex-1 overflow-auto px-3 py-3 md:overflow-x-hidden">
+      {/* Gondola grid */}
+      <div className="min-h-0 flex-1 overflow-auto px-3 py-3">
         {loading ? (
           <div className="flex h-full items-center justify-center">
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
         ) : (
-          <div className="mx-auto flex w-max max-w-none flex-col gap-2 md:w-full md:max-w-[980px]">
-            {grid.map((row, y) => (
-              <div
-                key={y}
-                className="flex gap-1.5 md:grid md:gap-1.5"
-                style={{ gridTemplateColumns: `repeat(${gondola.size_x}, minmax(0, 1fr))` }}
-              >
-                {row.map((cell, x) => {
-                  if (!cell) {
-                    return (
-                      <div
-                        key={`${x}-${y}`}
-                        className="flex h-24 w-14 shrink-0 items-center justify-center rounded-lg border border-dashed border-border/40 text-[10px] text-muted-foreground/30 md:w-auto"
-                      >
-                        —
-                      </div>
-                    );
-                  }
-                  const level = getStockLevel(cell.bottle_count);
-                  const meta = STOCK_META[level];
+          <div
+            className="mx-auto grid w-max gap-1.5"
+            style={{
+              gridTemplateColumns: `repeat(${gondola.size_x}, 112px)`,
+              gridTemplateRows: `repeat(${gondola.size_y}, 112px)`,
+            }}
+          >
+            {grid.flatMap((row, y) =>
+              row.map((cell, x) => {
+                if (!cell) {
                   return (
-                    <button
-                      key={cell.id}
-                      onClick={() => setEditingCell(cell)}
-                      className={cn(
-                        'flex h-24 w-14 shrink-0 flex-col items-center justify-center rounded-lg border p-1 text-center transition-all active:scale-95 md:w-auto',
-                        meta.bgSolid,
-                        'border-white',
-                        'hover:brightness-110'
-                      )}
+                    <div
+                      key={`${x}-${y}`}
+                      className="flex items-center justify-center rounded-lg border border-dashed border-border/40 text-[10px] text-muted-foreground/30"
                     >
-                      <span className="w-full truncate text-[9px] font-medium leading-tight text-white">
-                        {cell.wine_name || '—'}
-                      </span>
-                      <span className="mt-0.5 text-sm font-bold text-white">
-                        {cell.bottle_count}
-                      </span>
-                    </button>
+                      —
+                    </div>
                   );
-                })}
-              </div>
-            ))}
+                }
+                const level = getStockLevel(cell.bottle_count);
+                const meta = STOCK_META[level];
+                return (
+                  <button
+                    key={cell.id}
+                    onClick={() => setEditingCell(cell)}
+                    className={cn(
+                      'flex min-h-0 min-w-0 flex-col items-center justify-center rounded-lg border p-2 text-center transition-all active:scale-95',
+                      meta.bgSolid,
+                      'border-white',
+                      'hover:brightness-110'
+                    )}
+                  >
+                    <span className="w-full shrink-0 text-[10px] font-medium leading-tight text-white [overflow-wrap:anywhere]">
+                      {cell.wine_name || '—'}
+                    </span>
+                    <span className="mt-0.5 shrink-0 text-sm font-bold text-white">
+                      {cell.bottle_count}
+                    </span>
+                  </button>
+                );
+              })
+            )}
           </div>
         )}
       </div>
